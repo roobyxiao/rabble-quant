@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: quant-config-server
+  cloud:
+    config:
+      label: master
+      server:
+        git:
+          uri: https://github.com/roobyxiao/spring-cloud-config-repository/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
