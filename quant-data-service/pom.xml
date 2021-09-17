@@ -9,9 +9,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stock-data-service</artifactId>
+    <artifactId>quant-data-service</artifactId>
 
     <dependencies>
+        <!-- 引入jdbc支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- 连接MySQL数据库 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.26</version>
+        </dependency>
         <!-- springboot web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

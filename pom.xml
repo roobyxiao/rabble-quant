@@ -10,7 +10,7 @@
     <modules>
         <module>eureka-server</module>
         <module>stock-codes-service</module>
-        <module>stock-data-service</module>
+        <module>quant-data-service</module>
         <module>quant-gather-store-service</module>
         <module>quant-hystrix-dashboard</module>
         <module>quant-turbine</module>

@@ -26,7 +26,7 @@ public class StockService {
     }
 
     public List<Stock> fresh(){
-        String sql = "SELECT code, code_name, ipoDate, outDate FROM stock WHERE type = 1";
+        String sql = "SELECT code, code_name, ipoDate, outDate FROM stock WHERE type = 1 AND code NOT LIKE 'sz.3%'";
         stocks = jdbcTemplate.query(sql, new Stock());
         StockService stockService= SpringContextUtil.getBean(StockService.class);
         stockService.remove();
