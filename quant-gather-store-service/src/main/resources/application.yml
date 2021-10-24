@@ -10,3 +10,10 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
+ok:
+  http:
+    connect-timeout: 30
+    read-timeout: 30
+    write-timeout: 30
+    max-idle-connections: 200
+    keep-alive-duration: 300

@@ -10,9 +10,16 @@ public class Dividend implements RowMapper<Dividend> {
     private String code;
     private Date planDate;
     private Date dividendDate;
-    private float ratio;
+    private Float ratio;
 
     public Dividend() {
+    }
+
+    public Dividend(String code, Date planDate, Date dividendDate, float ratio) {
+        this.code = code;
+        this.planDate = planDate;
+        this.dividendDate = dividendDate;
+        this.ratio = ratio;
     }
 
     public String getCode() {
@@ -43,7 +50,7 @@ public class Dividend implements RowMapper<Dividend> {
         return ratio;
     }
 
-    public void setRatio(float ratio) {
+    public void setRatio(Float ratio) {
         this.ratio = ratio;
     }
 
@@ -51,6 +58,7 @@ public class Dividend implements RowMapper<Dividend> {
     public Dividend mapRow(ResultSet resultSet, int i) throws SQLException {
         Dividend dividend = new Dividend();
         dividend.setCode(resultSet.getString("code"));
+        dividend.setPlanDate(resultSet.getDate("plan_date"));
         dividend.setDividendDate(resultSet.getDate("dividend_date"));
         dividend.setRatio(resultSet.getFloat("ratio"));
         return dividend;

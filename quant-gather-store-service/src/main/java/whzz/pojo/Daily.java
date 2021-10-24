@@ -15,6 +15,10 @@ public class Daily implements RowMapper<Daily> {
     private float low;
     private float close;
     private long volume;
+    private long amount;
+    private float turn;
+    private int tradeStatus;
+    private float pctChg;
     private boolean isST;
     private float highLimit;
     private float lowLimit;
@@ -22,91 +26,153 @@ public class Daily implements RowMapper<Daily> {
     public Daily() {
     }
 
-    public Date getDate() {
+    public Date getDate ()
+    {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate (Date date)
+    {
         this.date = date;
     }
 
-    public String getCode() {
+    public String getCode ()
+    {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode (String code)
+    {
         this.code = code;
     }
 
-    public float getPreClose() {
+    public float getPreClose ()
+    {
         return preClose;
     }
 
-    public void setPreClose(float preClose) {
+    public void setPreClose (float preClose)
+    {
         this.preClose = preClose;
     }
 
-    public float getOpen() {
+    public float getOpen ()
+    {
         return open;
     }
 
-    public void setOpen(float open) {
+    public void setOpen (float open)
+    {
         this.open = open;
     }
 
-    public float getHigh() {
+    public float getHigh ()
+    {
         return high;
     }
 
-    public void setHigh(float high) {
+    public void setHigh (float high)
+    {
         this.high = high;
     }
 
-    public float getLow() {
+    public float getLow ()
+    {
         return low;
     }
 
-    public void setLow(float low) {
+    public void setLow (float low)
+    {
         this.low = low;
     }
 
-    public float getClose() {
+    public float getClose ()
+    {
         return close;
     }
 
-    public void setClose(float close) {
+    public void setClose (float close)
+    {
         this.close = close;
     }
 
-    public long getVolume() {
+    public long getVolume ()
+    {
         return volume;
     }
 
-    public void setVolume(long volume) {
+    public void setVolume (long volume)
+    {
         this.volume = volume;
     }
 
-    public boolean isST() {
+    public long getAmount ()
+    {
+        return amount;
+    }
+
+    public void setAmount (long amount)
+    {
+        this.amount = amount;
+    }
+
+    public float getTurn ()
+    {
+        return turn;
+    }
+
+    public void setTurn (float turn)
+    {
+        this.turn = turn;
+    }
+
+    public int getTradeStatus ()
+    {
+        return tradeStatus;
+    }
+
+    public void setTradeStatus (int tradeStatus)
+    {
+        this.tradeStatus = tradeStatus;
+    }
+
+    public float getPctChg ()
+    {
+        return pctChg;
+    }
+
+    public void setPctChg (float pctChg)
+    {
+        this.pctChg = pctChg;
+    }
+
+    public boolean isST ()
+    {
         return isST;
     }
 
-    public void setST(boolean ST) {
+    public void setST (boolean ST)
+    {
         isST = ST;
     }
 
-    public float getHighLimit() {
+    public float getHighLimit ()
+    {
         return highLimit;
     }
 
-    public void setHighLimit(float highLimit) {
+    public void setHighLimit (float highLimit)
+    {
         this.highLimit = highLimit;
     }
 
-    public float getLowLimit() {
+    public float getLowLimit ()
+    {
         return lowLimit;
     }
 
-    public void setLowLimit(float lowLimit) {
+    public void setLowLimit (float lowLimit)
+    {
         this.lowLimit = lowLimit;
     }
 
