@@ -7,6 +7,7 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 import whzz.service.*;
 
 import java.text.ParseException;
+import java.util.Date;
 
 public class QuantSpiderJob extends QuartzJobBean {
     @Autowired
@@ -25,7 +26,8 @@ public class QuantSpiderJob extends QuartzJobBean {
             e.printStackTrace();
         }*/
         try {
-            quantSpiderService.restoreUpLimit();
+            //quantSpiderService.restoreUpLimit();
+            quantSpiderService.restoreEastMoneyLimit(null);
         }
         catch (ParseException e) {
             e.printStackTrace();
