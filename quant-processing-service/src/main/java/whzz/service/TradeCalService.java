@@ -43,7 +43,7 @@ public class TradeCalService
             objects.add(endDate);
         }
         sb.append("AND open = 1 ORDER BY date DESC");
-        List<TradeCal> calendars = jdbcTemplate.query(sb.toString(), new TradeCal(), objects.toArray());
-        return calendars;
+        List<TradeCal> tradeCals = jdbcTemplate.query(sb.toString(), new TradeCal(), objects.toArray());
+        return tradeCals;
     }
 }

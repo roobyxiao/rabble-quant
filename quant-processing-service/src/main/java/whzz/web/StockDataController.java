@@ -12,7 +12,7 @@ public class StockDataController {
     @Autowired
     QuantAnalyzeService quantAnalyzeService;
 
-    @GetMapping("/data/limit")
+    @GetMapping("/keep")
     public void get() throws ParseException {
         quantAnalyzeService.simulate();
     }

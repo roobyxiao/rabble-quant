@@ -9,14 +9,13 @@ import whzz.job.QuantSpiderJob;
 public class QuartzConfiguration {
     private static final int interval=1;
     @Bean
-    public JobDetail weatherDataSyncJobDetail(){
+    public JobDetail jobDetail(){
         return JobBuilder.newJob(QuantSpiderJob.class).withIdentity("quantSyncJob").storeDurably().build();
     }
     @Bean
-    public Trigger weatherDataSyncTrigger(){
-        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInMinutes(interval).withRepeatCount(0);
-        return TriggerBuilder.newTrigger().forJob(weatherDataSyncJobDetail())
-                .withIdentity("quantSyncTrigger").withSchedule(scheduleBuilder).build();
+    public Trigger trigger(){
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 17 * * ?");
+        return TriggerBuilder.newTrigger().forJob(jobDetail())
+                .withIdentity("quantSyncTrigger").withSchedule(cronScheduleBuilder).build();
     }
 }

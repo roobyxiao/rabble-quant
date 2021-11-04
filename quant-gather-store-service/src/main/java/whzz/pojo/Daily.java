@@ -17,7 +17,7 @@ public class Daily implements RowMapper<Daily> {
     private long volume;
     private long amount;
     private float turn;
-    private int tradeStatus;
+    private boolean tradeStatus;
     private float pctChg;
     private boolean isST;
     private float highLimit;
@@ -126,13 +126,11 @@ public class Daily implements RowMapper<Daily> {
         this.turn = turn;
     }
 
-    public int getTradeStatus ()
-    {
+    public boolean isTradeStatus() {
         return tradeStatus;
     }
 
-    public void setTradeStatus (int tradeStatus)
-    {
+    public void setTradeStatus(boolean tradeStatus) {
         this.tradeStatus = tradeStatus;
     }
 

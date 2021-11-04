@@ -89,6 +89,18 @@ public class OkHttpUtil {
         //log.info("do post request and url[{}]", url);
         return execute(request);
     }
+
+    public Call doPostCall(String url, Map<String, String> params) {
+        FormBody.Builder builder = new FormBody.Builder();
+        if (params != null && params.keySet().size() > 0) {
+            for (String key : params.keySet()) {
+                builder.add(key, params.get(key));
+            }
+        }
+        Request request = new Request.Builder().url(url).post(builder.build()).build();
+        return okHttpClient.newCall(request);
+    }
+
     /**
      * post 请求, 请求数据为 json 的字符串
      * @param url  请求url地址

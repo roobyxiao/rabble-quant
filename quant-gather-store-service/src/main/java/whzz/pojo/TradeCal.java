@@ -24,8 +24,8 @@ public class TradeCal implements RowMapper<TradeCal> {
 
     @Override
     public TradeCal mapRow(ResultSet resultSet, int i) throws SQLException {
-        TradeCal calendar = new TradeCal();
-        calendar.setDate(resultSet.getDate("date"));
-        return calendar;
+        TradeCal tradeCal = new TradeCal();
+        tradeCal.setDate(resultSet.getDate("date"));
+        return tradeCal;
     }
 }

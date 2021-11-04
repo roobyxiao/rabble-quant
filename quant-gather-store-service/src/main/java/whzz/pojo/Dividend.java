@@ -2,6 +2,7 @@ package whzz.pojo;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -10,12 +11,12 @@ public class Dividend implements RowMapper<Dividend> {
     private String code;
     private Date planDate;
     private Date dividendDate;
-    private Float ratio;
+    private BigDecimal ratio;
 
     public Dividend() {
     }
 
-    public Dividend(String code, Date planDate, Date dividendDate, float ratio) {
+    public Dividend(String code, Date planDate, Date dividendDate, BigDecimal ratio) {
         this.code = code;
         this.planDate = planDate;
         this.dividendDate = dividendDate;
@@ -46,11 +47,11 @@ public class Dividend implements RowMapper<Dividend> {
         this.dividendDate = dividendDate;
     }
 
-    public float getRatio() {
+    public BigDecimal getRatio() {
         return ratio;
     }
 
-    public void setRatio(Float ratio) {
+    public void setRatio(BigDecimal ratio) {
         this.ratio = ratio;
     }
 
@@ -60,7 +61,7 @@ public class Dividend implements RowMapper<Dividend> {
         dividend.setCode(resultSet.getString("code"));
         dividend.setPlanDate(resultSet.getDate("plan_date"));
         dividend.setDividendDate(resultSet.getDate("dividend_date"));
-        dividend.setRatio(resultSet.getFloat("ratio"));
+        dividend.setRatio(resultSet.getBigDecimal("ratio"));
         return dividend;
     }
 }

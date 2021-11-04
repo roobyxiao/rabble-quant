@@ -15,8 +15,15 @@ public class StockService
 
     public List<Stock> getAllStocks()
     {
-        String sql = "SELECT code FROM stock";
+        String sql = "SELECT code, ipo_date FROM stock";
         List<Stock> stocks = jdbcTemplate.query(sql, new Stock());
         return stocks;
+    }
+
+    public Stock getStock(String code)
+    {
+        String sql = "SELECT code, ipo_date FROM stock where code = ?";
+        Stock stock = jdbcTemplate.queryForObject(sql, Stock.class, code);
+        return stock;
     }
 }
