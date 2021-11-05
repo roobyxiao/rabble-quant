@@ -1,40 +1,18 @@
 package whzz.pojo;
 
-import org.springframework.jdbc.core.RowMapper;
+import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
-
-public class Stock implements RowMapper<Stock> {
+@Data
+public class Stock {
     private String code;
-
+    @JSONField(name = "code_name")
+    private String name;
+    @JSONField(name = "ipoDate")
     private Date ipoDate;
-
-    public Stock() {
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public Date getIpoDate() {
-        return ipoDate;
-    }
-
-    public void setIpoDate(Date ipoDate) {
-        this.ipoDate = ipoDate;
-    }
-
-    @Override
-    public Stock mapRow(ResultSet resultSet, int i) throws SQLException {
-        Stock stock = new Stock();
-        stock.setCode(resultSet.getString("code"));
-        stock.setIpoDate(resultSet.getDate("ipo_date"));
-        return stock;
-    }
+    @JSONField(name = "outDate")
+    private Date outDate;
+    private int type;
+    private boolean status;
 }

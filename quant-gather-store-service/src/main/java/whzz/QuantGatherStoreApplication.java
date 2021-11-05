@@ -7,8 +7,11 @@ import cn.hutool.core.util.StrUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,11 +19,14 @@ import org.springframework.web.client.RestTemplate;
 @EnableEurekaClient
 @EnableHystrix
 @EnableCaching
+@EnableCircuitBreaker
+@EnableDiscoveryClient
+@EnableFeignClients
 public class QuantGatherStoreApplication {
     public static void main(String[] args) {
         int port=0;
         int defaultPort=8001;
-        int redisPort = 6379;
+        //int redisPort = 6379;
         int eurekaServerPort=8761;
         port = defaultPort ;
 

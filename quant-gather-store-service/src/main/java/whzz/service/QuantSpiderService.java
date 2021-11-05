@@ -1,12 +1,14 @@
 package whzz.service;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import whzz.client.QuantDataClient;
 import whzz.config.OkHttpUtil;
 import whzz.pojo.Daily;
 import whzz.pojo.Dividend;
@@ -14,13 +16,13 @@ import whzz.pojo.Stock;
 import whzz.pojo.TradeCal;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class QuantSpiderService {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private StockService stockService;
+    private QuantDataClient quantDataClient;
 
     @Autowired
     private TradeCalService tradeCalService;
@@ -50,35 +52,18 @@ public class QuantSpiderService {
     public void restoreCalendar()
     {
         String url = baseURL + "calendar";
-        Date startDate = Date.valueOf("2019-01-01");
-        String querySql = "SELECT MAX(date) FROM calendar";
-        Date maxDate= jdbcTemplate.queryForObject(querySql, Date.class);
-        if (maxDate != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(maxDate);
-            calendar.add(Calendar.DATE, 1);
-            startDate = new Date(calendar.getTime().getTime());
-        }
-        Calendar endCalendar = Calendar.getInstance();
-        endCalendar.setTime(new java.util.Date());
-        endCalendar.add(Calendar.MONTH, 1);
-        Date endDate = new Date(endCalendar.getTime().getTime());
+        Date startDate = Date.valueOf(quantDataClient.getCalMaxDate());
+        Date endDate = new Date(DateUtils.addMonths(DateUtil.date(), 1).getTime());
         HashMap params = new HashMap();
         params.put("start_date", startDate.toString());
         params.put("end_date", endDate.toString());
         JSONObject response = JSON.parseObject(okHttpUtil.doPost(url, params));
         int error_code = response.getIntValue("error_code");
         if (error_code == 0) {
-            JSONArray datas = response.getJSONArray("data");
-            for(int i = 0; i <datas.size(); i++) {
-                JSONObject data = datas.getJSONObject(i);
-                Date date = data.getSqlDate("calendar_date");
-                int open = data.getIntValue("is_trading_day");
-                String insertSql = "INSERT INTO calendar (date, open) VALUES (?, ?)";
-                jdbcTemplate.update(insertSql, date, open);
-            }
+            String data = response.getString("data");
+            List<TradeCal> cals = JSON.parseArray(data, TradeCal.class);
+            quantDataClient.saveCals(cals);
         }
-        System.out.println("restore calendar finished");
     }
 
     public void restoreStock()
@@ -88,31 +73,11 @@ public class QuantSpiderService {
         JSONObject response = JSON.parseObject(okHttpUtil.doPost(url, params));
         int error_code = response.getIntValue("error_code");
         if (error_code == 0) {
-            JSONArray datas = response.getJSONArray("data");
-            for(int i = 0; i <datas.size(); i++) {
-                JSONObject data = datas.getJSONObject(i);
-                String code = data.getString("code");
-                String name = data.getString("code_name");
-                Date ipoDate = data.getSqlDate("ipoDate");
-                Date outDate = data.getSqlDate("outDate");
-                int type = data.getIntValue("type");
-                int status = data.getIntValue("status");
-                if(type == 2)
-                    continue;
-                if(code.startsWith("sh.68"))
-                    continue;
-                String querySql = "SELECT COUNT(1) FROM stock WHERE code = ?";
-                int count = jdbcTemplate.queryForObject(querySql, Integer.class, code);
-                if (count == 0) {
-                    String insertSql = "INSERT INTO stock (code, name, ipo_date, out_date, status) VALUES (?, ?, ?, ?, ?)";
-                    jdbcTemplate.update(insertSql, code, name, ipoDate, outDate, status);
-                } else {
-                    String updateSql = "UPDATE stock SET name = ?, ipo_date = ?, out_date = ?, status = ?  WHERE code = ?";
-                    jdbcTemplate.update(updateSql, name, ipoDate, outDate, status, code);
-                }
-            }
+            String data = response.getString("data");
+            List<Stock> stocks = JSON.parseArray(data, Stock.class);
+            stocks.removeIf(stock -> stock.getType() == 2 || stock.getCode().startsWith("sh.68"));
+            System.out.println(quantDataClient.saveStocks(stocks));
         }
-        System.out.println("restore stock finished");
     }
 
 
@@ -179,7 +144,7 @@ public class QuantSpiderService {
         if(startDate == null)
             startDate = Date.valueOf("2019-01-01");
         String url = baseURL + "daily";
-        List<Stock> stocks = stockService.getAllStocks();
+        List<Stock> stocks = quantDataClient.getAll();
         for (Stock stock: stocks){
             System.out.println(stock.getCode());
             HashMap params = new HashMap();
@@ -286,7 +251,7 @@ public class QuantSpiderService {
                     } else {
                         code = "sz." + code;
                     }
-                    Stock stock = stockService.getStock(code);
+                    Stock stock = quantDataClient.getStock(code);
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(stock.getIpoDate());
                     calendar.add(Calendar.YEAR, 1);

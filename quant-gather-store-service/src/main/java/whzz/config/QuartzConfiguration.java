@@ -14,8 +14,10 @@ public class QuartzConfiguration {
     }
     @Bean
     public Trigger trigger(){
+        SimpleScheduleBuilder scheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
+                .withIntervalInMinutes(interval).withRepeatCount(0);
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 17 * * ?");
         return TriggerBuilder.newTrigger().forJob(jobDetail())
-                .withIdentity("quantSyncTrigger").withSchedule(cronScheduleBuilder).build();
+                .withIdentity("quantSyncTrigger").withSchedule(scheduleBuilder).build();
     }
 }
