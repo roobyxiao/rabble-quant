@@ -14,17 +14,15 @@ import java.sql.Date;
 @Table(name = "stock")
 public class Stock {
     @Id
-    @Column(name = "code")
     private String code;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "ipo_date")
-    private Date ipoDate;
-    @Column(name = "out_date")
-    private Date outDate;
-    @Column(name = "type")
-    private int type;
-    @Column(name = "status")
-    private boolean status;
 
+    private String name;
+
+    private Date ipoDate;
+
+    private Date outDate;
+
+    private int type;
+
+    private boolean status;
 }

@@ -5,6 +5,7 @@ import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import whzz.service.QuantSpiderService;
+import java.sql.Date;
 
 public class QuantSpiderJob extends QuartzJobBean {
     @Autowired
@@ -13,17 +14,15 @@ public class QuantSpiderJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context)
     {
         System.out.println("定时启动：" + DateUtil.now());
-        quantSpiderService.restoreStock();
-        /*Date startDate = new Date(new java.util.Date().getTime());
-        quantSpiderService.restoreCalendar();
-        quantSpiderService.restoreDaily(startDate);
-        try {
-            quantSpiderService.restoreLimit(startDate);
-            quantSpiderService.restoreEastMoneyLimit(startDate);
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }*/
-        //quantSpiderService.restoreDividend(2018);
+        String startDate = "2019-01-01";
+        //Date startDate = new Date(new java.util.Date().getTime());
+        //quantSpiderService.restoreCalendar(startDate);
+        //quantSpiderService.restoreStock();
+
+        //quantSpiderService.restoreDailyByStock(startDate);
+        //quantSpiderService.restoreLimit(startDate);
+
+        //quantSpiderService.restoreEastMoneyLimit("");
+        quantSpiderService.restoreDividend(2018);
     }
 }

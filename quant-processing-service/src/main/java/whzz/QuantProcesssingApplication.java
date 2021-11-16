@@ -21,7 +21,8 @@ import java.util.concurrent.TimeoutException;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableCaching
-public class QuantDataApplication {
+public class QuantProcesssingApplication
+{
     public static void main(String[] args) {
         int port = 0;
         int defaultPort = 8021;
@@ -80,7 +81,7 @@ public class QuantDataApplication {
             System.err.printf("端口%d被占用了，无法启动%n", port );
             System.exit(1);
         }
-        new SpringApplicationBuilder(QuantDataApplication.class).properties("server.port=" + port).run(args);
+        new SpringApplicationBuilder(QuantProcesssingApplication.class).properties("server.port=" + port).run(args);
 
     }
     @Bean

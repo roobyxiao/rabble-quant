@@ -1,12 +1,8 @@
 package whzz.pojo;
 
-import org.springframework.jdbc.core.RowMapper;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
-public class Forward implements RowMapper<Forward> {
+public class Forward{
     private Date date;
     private String code;
     private float preClose;
@@ -90,19 +86,5 @@ public class Forward implements RowMapper<Forward> {
 
     public void setAdjustVolume(long adjustVolume) {
         this.adjustVolume = adjustVolume;
-    }
-
-    @Override
-    public Forward mapRow(ResultSet resultSet, int i) throws SQLException {
-        Forward forward = new Forward();
-        forward.setCode(resultSet.getString("code"));
-        forward.setDate(resultSet.getDate("date"));
-        forward.setPreClose(resultSet.getFloat("preclose"));
-        forward.setOpen(resultSet.getFloat("open"));
-        forward.setHigh(resultSet.getFloat("high"));
-        forward.setLow(resultSet.getFloat("low"));
-        forward.setClose(resultSet.getFloat("close"));
-        forward.setVolume(resultSet.getLong("volume"));
-        return forward;
     }
 }

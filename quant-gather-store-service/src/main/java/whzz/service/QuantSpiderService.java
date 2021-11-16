@@ -2,20 +2,22 @@ package whzz.service;
 
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import whzz.client.QuantDataClient;
 import whzz.config.OkHttpUtil;
 import whzz.pojo.Daily;
+import whzz.pojo.DailyLimit;
 import whzz.pojo.Dividend;
 import whzz.pojo.Stock;
 import whzz.pojo.TradeCal;
+import whzz.pojo.UpLimit;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
+import java.security.cert.TrustAnchor;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.DateFormat;
@@ -33,26 +35,13 @@ public class QuantSpiderService {
     private OkHttpUtil okHttpUtil;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private QuantDataClient quantDataClient;
-
-    @Autowired
-    private TradeCalService tradeCalService;
-
-    @Autowired
-    private DailyService dailyService;
-
-    @Autowired
-    private DividendService dividendService;
 
     private static String baseURL = "http://127.0.0.1:5000/";
 
-    public void restoreCalendar()
+    public void restoreCalendar(String startDate)
     {
         String url = baseURL + "calendar";
-        Date startDate = Date.valueOf(quantDataClient.getCalMaxDate());
         Date endDate = new Date(DateUtils.addMonths(DateUtil.date(), 1).getTime());
         HashMap params = new HashMap();
         params.put("start_date", startDate.toString());
@@ -62,7 +51,7 @@ public class QuantSpiderService {
         if (error_code == 0) {
             String data = response.getString("data");
             List<TradeCal> cals = JSON.parseArray(data, TradeCal.class);
-            quantDataClient.saveCals(cals);
+            System.out.println(quantDataClient.saveCals(cals));
         }
     }
 
@@ -106,44 +95,43 @@ public class QuantSpiderService {
                     JSONObject response = JSON.parseObject(okHttpUtil.doGet(url, params));
                     JSONObject result = response.getJSONObject("result");
                     if (result != null) {
-                        List<Dividend> dividends = new ArrayList<>();
-                        JSONArray datas = result.getJSONArray("data");
-                        for (int j = 0; j < datas.size(); j++) {
-                            JSONObject data = datas.getJSONObject(j);
-                            String[] codes = data.getString("SECUCODE").toLowerCase().split("\\.");
-                            String code = codes[1] + "." + codes[0];
-                            if(code.startsWith("sh.68"))
-                                continue;
-                            Date planDate = data.getSqlDate("PLAN_NOTICE_DATE");
-                            Date dividendDate = data.getSqlDate("EX_DIVIDEND_DATE");
-                            if (dividendDate == null)
-                                continue;
-                            Date startDate = Date.valueOf("2019-01-01");
-                            if (dividendDate.before(startDate))
-                                continue;
-                            BigDecimal ratio = data.getBigDecimal("BONUS_IT_RATIO");
-                            Dividend dividend = new Dividend();
-                            dividend.setCode(code);
-                            dividend.setPlanDate(planDate);
-                            dividend.setDividendDate(dividendDate);
-                            dividend.setRatio(ratio);
-                            dividends.add(dividend);
-                        }
-                        dividendService.saveDividends(dividends);
+                        String data = result.getString("data");
+                        List<Dividend> dividends = JSON.parseArray(data, Dividend.class);
+                        dividends.removeIf(dividend -> dividend.getCode().startsWith("sh.68") || dividend.getDividendDate() == null || dividend.getDividendDate().before(Date.valueOf("2019-01-01")));
+                        System.out.println(quantDataClient.saveDividens(dividends));
                     } else {
                         break;
                     }
                 }
             }
         }
-        System.out.println("restore dividend finished");
     }
 
-    public void restoreDaily(Date startDate)
+    public void restoreDailyByStock(String startDate)
     {
-        if(startDate == null)
-            startDate = Date.valueOf("2019-01-01");
+        if (startDate.isEmpty())
+            startDate = "2019-01-01";
         String url = baseURL + "daily";
+        List<Stock> stocks = quantDataClient.getAll();
+        for (Stock stock: stocks){
+            System.out.println(stock.getCode());
+            HashMap params = new HashMap();
+            params.put("code", stock.getCode());
+            params.put("start_date", startDate);
+            JSONObject response = JSON.parseObject(okHttpUtil.doPost(url, params));
+            int error_code = response.getIntValue("error_code");
+            if (error_code == 0) {
+                String data = response.getString("data");
+                List<Daily> dailies = JSON.parseArray(data, Daily.class);
+                System.out.println(quantDataClient.saveDailies(dailies));
+            }
+        }
+    }
+
+    public void restoreDailyByDate(Date startDate)
+    {
+        String url = baseURL + "daily";
+        List<Daily> dailies = new ArrayList<>();
         List<Stock> stocks = quantDataClient.getAll();
         for (Stock stock: stocks){
             System.out.println(stock.getCode());
@@ -153,40 +141,20 @@ public class QuantSpiderService {
             JSONObject response = JSON.parseObject(okHttpUtil.doPost(url, params));
             int error_code = response.getIntValue("error_code");
             if (error_code == 0) {
-                JSONArray datas = response.getJSONArray("data");
-                List<Daily> dailies = new ArrayList<>();
-                for(int i = 0; i <datas.size(); i++) {
-                    Daily daily = new Daily();
-                    JSONObject data = datas.getJSONObject(i);
-                    daily.setCode(data.getString("code"));
-                    daily.setDate(data.getSqlDate("date"));
-                    daily.setOpen(data.getFloatValue("open"));
-                    daily.setHigh(data.getFloatValue("high"));
-                    daily.setLow(data.getFloatValue("low"));
-                    daily.setClose(data.getFloatValue("close"));
-                    daily.setPreClose(data.getFloatValue("preclose"));
-                    daily.setVolume(data.getLongValue("volume"));
-                    if (data.getFloat("amount") != null)
-                        daily.setAmount(data.getFloat("amount").longValue());
-                    daily.setTurn(data.getFloatValue("turn"));
-                    daily.setTradeStatus(data.getBooleanValue("tradestatus"));
-                    daily.setPctChg(data.getFloatValue("pctChg"));
-                    daily.setST(data.getBooleanValue("isST"));
-                    dailies.add(daily);
-                }
-                if (!dailies.isEmpty())
-                    dailyService.saveDailies(dailies);
+                String data = response.getString("data");
+                dailies.addAll(JSON.parseArray(data, Daily.class));
+
             }
         }
-        System.out.println("restore daily finished");
+        System.out.println(quantDataClient.saveDailies(dailies));
     }
 
-    public void restoreLimit(Date startDate) throws ParseException
+    public void restoreLimit(String startDate)
     {
-        if(startDate == null)
-            startDate = Date.valueOf("2019-01-01");
+        if (startDate.isEmpty())
+            startDate = "2019-01-01";
         String url = baseURL + "limit";
-        List<TradeCal> tradeCals = tradeCalService.getTradeCals(startDate);
+        List<TradeCal> tradeCals = quantDataClient.getOpenCals(startDate);
         for (TradeCal cal: tradeCals){
             System.out.println(cal.getDate());
             HashMap params = new HashMap();
@@ -194,36 +162,18 @@ public class QuantSpiderService {
             JSONObject response = JSON.parseObject(okHttpUtil.doPost(url, params));
             int error_code = response.getIntValue("error_code");
             if (error_code == 0) {
-                JSONArray datas = response.getJSONArray("data");
-                List<Daily> dailies = new ArrayList<>();
-                for(int i = 0; i <datas.size(); i++) {
-                    JSONObject data = datas.getJSONObject(i);
-                    String tsCode = data.getString("ts_code");
-                    String[] codes = tsCode.split("\\.");
-                    String code = codes[1].toLowerCase() + "." + codes[0];
-                    Daily daily = new Daily();
-                    daily.setCode(code);
-                    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-                    String dateStr = data.getString("trade_date");
-                    Date date = new Date(dateFormat.parse(dateStr).getTime());
-                    daily.setDate(date);
-                    float highLimit = data.getFloatValue("up_limit");
-                    float lowLimit = data.getFloatValue("down_limit");
-                    daily.setHighLimit(highLimit);
-                    daily.setLowLimit(lowLimit);
-                    dailies.add(daily);
-                }
-                dailyService.updateDailies(dailies);
+                String date = response.getString("data");
+                List<DailyLimit> dailies = JSON.parseArray(date, DailyLimit.class);
+                System.out.println(quantDataClient.updateDailyLimits(dailies));
             }
         }
-        System.out.println("restore limit finish");
     }
 
-    public void restoreEastMoneyLimit(Date date) throws ParseException
+    public void restoreEastMoneyLimit(String startDate)
     {
-        if (date == null)
-            date = Date.valueOf("2019-12-02");
-        List<TradeCal> tradeCals = tradeCalService.getTradeCals(date);
+        if (startDate == null || startDate.isEmpty())
+            startDate = "2019-12-02";
+        List<TradeCal> tradeCals = quantDataClient.getOpenCals(startDate);
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String url = "https://push2ex.eastmoney.com/getTopicZTPool";
         HashMap params = new HashMap();
@@ -238,52 +188,19 @@ public class QuantSpiderService {
             JSONObject response = JSON.parseObject(okHttpUtil.doGet(url, params));
             JSONObject result = response.getJSONObject("data");
             if (result != null) {
-                JSONArray datas = result.getJSONArray("pool");
-                System.out.println(datas.size());
-                for(int j = 0; j <datas.size(); j++) {
-                    JSONObject data = datas.getJSONObject(j);
-                    float zdp = data.getFloatValue("zdp");
-                    if (zdp > 12 || zdp < 7)
-                        continue;
-                    String code = data.getString("c");
-                    if (code.startsWith("6")) {
-                        code = "sh." + code;
-                    } else {
-                        code = "sz." + code;
-                    }
-                    Stock stock = quantDataClient.getStock(code);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(stock.getIpoDate());
-                    calendar.add(Calendar.YEAR, 1);
-                    if(tradeCal.getDate().before(calendar.getTime()))
-                        continue;
-                    Time first_time = convertTime(data.getString("fbt"));
-                    Time end_time = convertTime(data.getString("lbt"));
-                    int open = data.getIntValue("zbc");
-                    int last = data.getIntValue("lbc");
-                    JSONObject zttj = data.getJSONObject("zttj");
-                    String statistics = zttj.getString("ct") + "/" + zttj.getString("days");
-                    String insertSql = "INSERT INTO up_limit (code, date, first_time, end_time, open, last, statistics) "
-                                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-                    jdbcTemplate.update(insertSql, code, tradeCal.getDate(), first_time, end_time, open, last, statistics);
-                }
+                String data = result.getString("pool");
+                List<UpLimit> limits = JSON.parseArray(data, UpLimit.class);
+                limits.forEach(upLimit -> upLimit.setDate(tradeCal.getDate()));
+                limits.removeIf(upLimit -> {
+                    boolean remove = upLimit.getZdp() > 12;
+                    Stock stock = quantDataClient.getStock(upLimit.getCode());
+                    java.util.Date date = DateUtils.addYears(stock.getIpoDate(), 1);
+                    if(upLimit.getDate().before(date))
+                        remove |= true;
+                    return remove;
+                });
+                System.out.println(quantDataClient.saveLimits(limits));
             }
         }
-        System.out.println("restore up_limit finished");
-    }
-
-    private Time convertTime(String str)
-    {
-        if (str.length() == 5)
-            str = "0" + str;
-        SimpleDateFormat format = new SimpleDateFormat("hhmmss");
-        java.util.Date d = null;
-        try {
-            d = format.parse(str);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Time time = new Time(d.getTime());
-        return time;
     }
 }

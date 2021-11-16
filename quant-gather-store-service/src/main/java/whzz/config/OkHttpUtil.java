@@ -68,6 +68,7 @@ public class OkHttpUtil {
                 //log.warn("headers"s length[{}] is error.", headers.length);
             }
         }
+        System.out.println(sb.toString());
         Request request = builder.url(sb.toString()).build();
         //log.info("do get request and url[{}]", sb.toString());
         return execute(request);

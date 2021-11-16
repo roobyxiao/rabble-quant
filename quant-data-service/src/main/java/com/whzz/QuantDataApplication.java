@@ -1,6 +1,5 @@
 package com.whzz;
 
-import brave.sampler.Sampler;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -9,7 +8,6 @@ import cn.hutool.core.util.StrUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.context.annotation.Bean;
 
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
@@ -82,9 +80,9 @@ public class QuantDataApplication {
         new SpringApplicationBuilder(QuantDataApplication.class).properties("server.port=" + port).run(args);
     }
 
-    @Bean
+    /*@Bean
     public Sampler defaultSampler()
     {
         return Sampler.ALWAYS_SAMPLE;
-    }
+    }*/
 }

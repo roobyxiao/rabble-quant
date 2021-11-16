@@ -1,12 +1,13 @@
 package whzz.pojo;
 
-import org.springframework.jdbc.core.RowMapper;
+import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Data;
+import whzz.util.FastJsonSerializerUtil;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
-public class Daily implements RowMapper<Daily> {
+@Data
+public class Daily {
     private Date date;
     private String code;
     private float preClose;
@@ -15,179 +16,11 @@ public class Daily implements RowMapper<Daily> {
     private float low;
     private float close;
     private long volume;
+    @JSONField(deserializeUsing = FastJsonSerializerUtil.LongFormat.class)
     private long amount;
     private float turn;
+    @JSONField(name = "tradestatus")
     private boolean tradeStatus;
     private float pctChg;
     private boolean isST;
-    private float highLimit;
-    private float lowLimit;
-
-    public Daily() {
-    }
-
-    public Date getDate ()
-    {
-        return date;
-    }
-
-    public void setDate (Date date)
-    {
-        this.date = date;
-    }
-
-    public String getCode ()
-    {
-        return code;
-    }
-
-    public void setCode (String code)
-    {
-        this.code = code;
-    }
-
-    public float getPreClose ()
-    {
-        return preClose;
-    }
-
-    public void setPreClose (float preClose)
-    {
-        this.preClose = preClose;
-    }
-
-    public float getOpen ()
-    {
-        return open;
-    }
-
-    public void setOpen (float open)
-    {
-        this.open = open;
-    }
-
-    public float getHigh ()
-    {
-        return high;
-    }
-
-    public void setHigh (float high)
-    {
-        this.high = high;
-    }
-
-    public float getLow ()
-    {
-        return low;
-    }
-
-    public void setLow (float low)
-    {
-        this.low = low;
-    }
-
-    public float getClose ()
-    {
-        return close;
-    }
-
-    public void setClose (float close)
-    {
-        this.close = close;
-    }
-
-    public long getVolume ()
-    {
-        return volume;
-    }
-
-    public void setVolume (long volume)
-    {
-        this.volume = volume;
-    }
-
-    public long getAmount ()
-    {
-        return amount;
-    }
-
-    public void setAmount (long amount)
-    {
-        this.amount = amount;
-    }
-
-    public float getTurn ()
-    {
-        return turn;
-    }
-
-    public void setTurn (float turn)
-    {
-        this.turn = turn;
-    }
-
-    public boolean isTradeStatus() {
-        return tradeStatus;
-    }
-
-    public void setTradeStatus(boolean tradeStatus) {
-        this.tradeStatus = tradeStatus;
-    }
-
-    public float getPctChg ()
-    {
-        return pctChg;
-    }
-
-    public void setPctChg (float pctChg)
-    {
-        this.pctChg = pctChg;
-    }
-
-    public boolean isST ()
-    {
-        return isST;
-    }
-
-    public void setST (boolean ST)
-    {
-        isST = ST;
-    }
-
-    public float getHighLimit ()
-    {
-        return highLimit;
-    }
-
-    public void setHighLimit (float highLimit)
-    {
-        this.highLimit = highLimit;
-    }
-
-    public float getLowLimit ()
-    {
-        return lowLimit;
-    }
-
-    public void setLowLimit (float lowLimit)
-    {
-        this.lowLimit = lowLimit;
-    }
-
-    @Override
-    public Daily mapRow(ResultSet resultSet, int i) throws SQLException {
-        Daily daily = new Daily();
-        daily.setCode(resultSet.getString("code"));
-        daily.setDate(resultSet.getDate("date"));
-        daily.setPreClose(resultSet.getFloat("preclose"));
-        daily.setOpen(resultSet.getFloat("open"));
-        daily.setHigh(resultSet.getFloat("high"));
-        daily.setLow(resultSet.getFloat("low"));
-        daily.setClose(resultSet.getFloat("close"));
-        daily.setST(resultSet.getBoolean("isST"));
-        daily.setVolume(resultSet.getLong("volume"));
-        daily.setHighLimit(resultSet.getFloat("high_limit"));
-        daily.setLowLimit(resultSet.getFloat("low_limit"));
-        return daily;
-    }
 }

@@ -14,7 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 feign:
   hystrix:
-    enabled: true
+    enabled: false
   compression:
     request:
       enabled: true #开启请求压缩
@@ -32,8 +32,8 @@ hystrix:
             timeoutInMilliseconds: 9000
 #ribbon的超时时间
 ribbon:
-  ReadTimeout: 3000
-  ConnectTimeout: 3000
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
 #management:
 #  endpoints:
 #    web:
