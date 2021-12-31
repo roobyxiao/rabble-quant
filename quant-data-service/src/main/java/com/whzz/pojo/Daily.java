@@ -1,12 +1,11 @@
 package com.whzz.pojo;
 
 import lombok.Data;
-import javax.persistence.Column;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-import java.lang.reflect.Field;
 import java.sql.Date;
 
 @Entity
@@ -29,7 +28,7 @@ public class Daily
 
     private float close;
 
-    private float preClose;
+    private float lastClose;
 
     private long volume;
 
@@ -37,14 +36,10 @@ public class Daily
 
     private float turn;
 
-    private boolean tradeStatus;
+    private float percent;
 
-    private float pctChg;
+    private float limitUp;
 
-    @Column(name = "is_st")
-    private boolean isST;
+    private float limitDown;
 
-    private float highLimit;
-
-    private float lowLimit;
 }

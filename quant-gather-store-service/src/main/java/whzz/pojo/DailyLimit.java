@@ -15,8 +15,8 @@ public class DailyLimit
     private Date date;
 
     @JSONField(name = "up_limit")
-    private float highLimit;
+    private float limitUp;
 
     @JSONField(name = "down_limit")
-    private float lowLimit;
+    private float limitDown;
 }

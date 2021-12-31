@@ -7,12 +7,33 @@ spring:
     name: quant-processing-service
   zipkin:
     base-url: http://localhost:9411
-  datasource:
-    url: jdbc:mysql://localhost:3306/quant?serverTimezone=GMT%2B8&useSSL=false
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-logging:
-  level:
-    org.springframework.jdbc.core.JdbcTemplate: WARN
-    #org.springframework.jdbc.core.StatementCreatorUtils: TRACE
+feign:
+  hystrix:
+    enabled: false
+  compression:
+    request:
+      enabled: true #开启请求压缩
+    response:
+      enabled: true #开启请求压缩
+#hystrix的超时时间
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 9000
+#ribbon的超时时间
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#      cors:
+#        allowed-origins: "*"
+#        allowed-methods: "*"

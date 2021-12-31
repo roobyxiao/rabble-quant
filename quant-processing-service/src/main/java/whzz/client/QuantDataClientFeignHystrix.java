@@ -1,16 +1,15 @@
 package whzz.client;
 
 import cn.hutool.core.date.DateUtil;
-import whzz.pojo.*;
+import whzz.pojo.Daily;
+import whzz.pojo.Stock;
+import whzz.pojo.TradeCal;
+import whzz.pojo.UpLimit;
 
+import java.sql.Date;
 import java.util.List;
 
 public class QuantDataClientFeignHystrix implements QuantDataClient{
-    @Override
-    public String saveStock(Stock stock) {
-        return null;
-    }
-
     @Override
     public String saveStocks(List<Stock> stocks) {
         return "stocks save failed: " + DateUtil.now();
@@ -27,12 +26,7 @@ public class QuantDataClientFeignHystrix implements QuantDataClient{
     }
 
     @Override
-    public List<Stock> getAllStocks() {
-        return null;
-    }
-
-    @Override
-    public List<Stock> getListStocks() {
+    public List<Stock> getAll() {
         return null;
     }
 
@@ -53,8 +47,8 @@ public class QuantDataClientFeignHystrix implements QuantDataClient{
     }
 
     @Override
-    public boolean isOpen(String date) {
-        return false;
+    public Daily getDaily(String code, Date date) {
+        return null;
     }
 
     @Override
@@ -64,36 +58,18 @@ public class QuantDataClientFeignHystrix implements QuantDataClient{
     }
 
     @Override
-    public String saveXqDailies (List<XqDaily> dailies)
-    {
-        return "xue qiu dailies save failed: " + DateUtil.now();
-    }
-
-    @Override
-    public String saveEmDailies(List<EmDaily> dailies) {
-        return null;
-    }
-
-    @Override
-    public String updateDailyLimits (List<DailyLimit> dailies)
-    {
-        return "daily limits save failed: " + DateUtil.now();
-    }
-
-    @Override
     public String saveLimits (List<UpLimit> limits)
     {
         return "up limits save failed: " + DateUtil.now();
     }
 
     @Override
-    public String saveDividens (List<Dividend> dividends)
-    {
-        return "dividends save failed: " + DateUtil.now();
+    public String saveLimit(UpLimit limit) {
+        return null;
     }
 
     @Override
-    public String saveTick(Tick tick) {
+    public List<UpLimit> getLimits() {
         return null;
     }
 }

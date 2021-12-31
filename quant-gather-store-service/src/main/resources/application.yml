@@ -7,11 +7,6 @@ spring:
     name: quant-gather-store-service
   zipkin:
     base-url: http://localhost:9411
-  datasource:
-    url: jdbc:mysql://localhost:3306/quant?serverTimezone=GMT%2B8&useSSL=false
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
 feign:
   hystrix:
     enabled: false

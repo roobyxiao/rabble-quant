@@ -1,17 +1,37 @@
 package whzz.config;
 
 import okhttp3.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import whzz.util.URLUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class OkHttpUtil {
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType XML = MediaType.parse("application/xml; charset=utf-8");
-    @Autowired
-    private OkHttpClient okHttpClient;
+
+    private OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        .connectTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+        .readTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+        .writeTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+        .cookieJar(new CookieJar() {
+            private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+
+            @Override
+            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                cookieStore.put(url.host(), cookies);
+            }
+            @Override
+            public List<Cookie> loadForRequest(HttpUrl url) {
+                List<Cookie> cookies = cookieStore.get(URLUtil.getDomainName(url.url()));
+                return cookies != null ? cookies : new ArrayList<Cookie>();
+            }
+        }).build();
     /**
      * get 请求
      * @param url  请求url地址
@@ -68,7 +88,7 @@ public class OkHttpUtil {
                 //log.warn("headers"s length[{}] is error.", headers.length);
             }
         }
-        System.out.println(sb.toString());
+        //System.out.println(sb.toString());
         Request request = builder.url(sb.toString()).build();
         //log.info("do get request and url[{}]", sb.toString());
         return execute(request);
