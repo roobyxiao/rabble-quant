@@ -18,11 +18,7 @@ public class QuantSpiderJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context)
     {
         String startDate = new Date(new java.util.Date().getTime()).toString();
-        startDate = "2021-12-31";
-        //syncAll();
-        if (isOpen(startDate))
-            quantSpiderService.restoreTickByDate(startDate);
-            //syncDaily(startDate);
+        syncDaily(startDate);
     }
 
     private void syncAll()

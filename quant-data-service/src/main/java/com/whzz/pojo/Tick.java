@@ -13,21 +13,13 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-@Entity
-@IdClass(DailyId.class)
 @Data
-@Table(name = "tick")
-@TypeDef(name = "json", typeClass = JsonStringType.class)
 public class Tick{
 
-    @Id
     private String code;
 
-    @Id
     private Date date;
 
-    @Type(type = "json")
-    @Column(columnDefinition = "json" )
     private List<TickData> data;
 
 }

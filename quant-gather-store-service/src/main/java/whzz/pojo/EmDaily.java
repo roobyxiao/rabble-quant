@@ -27,4 +27,8 @@ public class EmDaily {
     private float turn;
     @JSONField(name = "f170")
     private float percent;
+    @JSONField(name = "f51")
+    private float limitUp;
+    @JSONField(name = "f52")
+    private float limitDown;
 }

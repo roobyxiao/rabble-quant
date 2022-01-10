@@ -181,7 +181,7 @@ public class QuantSpiderService {
     {
         String url = "https://push2.eastmoney.com/api/qt/stock/get";
         HashMap params = new HashMap();
-        params.put("fields", "f43,f44,f45,f46,f47,f48,f60,f168,f170");
+        params.put("fields", "f43,f44,f45,f46,f47,f48,f51,f52,f60,f168,f170");
         params.put("fltt", "2");
         List<EmDaily> dailies = new ArrayList<>();
         List<Stock> stocks = quantDataClient.getAllStocks();
@@ -192,7 +192,7 @@ public class QuantSpiderService {
             JSONObject data = response.getJSONObject("data");
             if (data != null) {
                 String close = data.getString("f43");
-                if (!close.equals("-")) {
+                if (!(close.equals("-") || close.equals("0.0"))) {
                     EmDaily daily = JSON.parseObject(data.toJSONString(), EmDaily.class);
                     daily.setCode(code);
                     daily.setDate(Date.valueOf(startDate));
