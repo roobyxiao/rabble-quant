@@ -9,17 +9,26 @@ import java.sql.Date;
 public class Daily {
     private String code;
     private Date date;
+    @JSONField(name = "f46")
     private float open;
+    @JSONField(name = "f44")
     private float high;
+    @JSONField(name = "f45")
     private float low;
+    @JSONField(name = "f43")
     private float close;
-    @JSONField(name = "preclose")
+    @JSONField(name = "f60")
     private float lastClose;
+    @JSONField(name = "f47")
     private long volume;
+    @JSONField(name = "f48")
     private float amount;
+    @JSONField(name = "f168")
     private float turn;
-    @JSONField(name = "tradestatus")
-    private boolean tradeStatus;
-    @JSONField(name = "pctChg")
+    @JSONField(name = "f170")
     private float percent;
+    @JSONField(name = "f51")
+    private float limitUp;
+    @JSONField(name = "f52")
+    private float limitDown;
 }

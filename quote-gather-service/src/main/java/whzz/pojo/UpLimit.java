@@ -21,4 +21,6 @@ public class UpLimit
     private int open;
     @JSONField(name = "lbc")
     private int last;
+    private boolean keep;
+    private boolean status;
 }

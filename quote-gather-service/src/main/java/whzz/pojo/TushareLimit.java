@@ -6,7 +6,7 @@ import whzz.util.FastJsonSerializerUtil;
 import java.sql.Date;
 
 @Data
-public class DailyLimit
+public class TushareLimit
 {
     @JSONField(name = "ts_code", deserializeUsing = FastJsonSerializerUtil.TSCodeFormat.class)
     private String code;

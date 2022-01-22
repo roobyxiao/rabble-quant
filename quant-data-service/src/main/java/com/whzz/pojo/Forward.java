@@ -11,8 +11,8 @@ import java.sql.Date;
 @Entity
 @IdClass(DailyId.class)
 @Data
-@Table(name = "daily")
-public class Daily
+@Table(name = "forward")
+public class Forward
 {
     @Id
     private String code;
@@ -37,8 +37,4 @@ public class Daily
     private float turn;
 
     private float percent;
-
-    private float limitUp;
-
-    private float limitDown;
 }

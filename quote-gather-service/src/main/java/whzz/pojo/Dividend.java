@@ -5,7 +5,7 @@ import lombok.Data;
 import whzz.util.FastJsonSerializerUtil;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 public class Dividend {

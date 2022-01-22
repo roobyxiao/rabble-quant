@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/stock")
@@ -30,9 +29,9 @@ public class StockController {
     }
 
     @GetMapping("get/{code}")
-    public Optional<Stock> getStock(@PathVariable("code")String code)
+    public Stock getStock(@PathVariable("code")String code)
     {
-        return stockDao.findById(code);
+        return stockDao.findById(code).get();
     }
 
     @GetMapping("/exists/{code}")

@@ -4,9 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.whzz.dao.DividendDao;
 import com.whzz.pojo.Dividend;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,24 @@ public class DividendController {
     {
         dividendDao.saveAll(dividends);
         return "dividends saved: " + DateUtil.now();
+    }
+
+    @RequestMapping(value = "/save")
+    public String saveDividend(@RequestBody Dividend dividend)
+    {
+        dividendDao.save(dividend);
+        return "dividend saved: " + DateUtil.now();
+    }
+
+    @GetMapping(value = "/getCodes")
+    public List<String> findDistinctCodes()
+    {
+        return dividendDao.findDistinctCodes();
+    }
+
+    @GetMapping(value = "/get/{code}")
+    public List<Dividend> getByCode(@PathVariable("code") String code)
+    {
+        return dividendDao.findByCodeOrderByDividendDateDesc(code);
     }
 }

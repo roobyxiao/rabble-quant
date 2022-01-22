@@ -6,7 +6,7 @@ import lombok.Data;
 import java.sql.Date;
 
 @Data
-public class EmDaily {
+public class Forward{
     private String code;
     private Date date;
     @JSONField(name = "f46")
@@ -27,8 +27,4 @@ public class EmDaily {
     private float turn;
     @JSONField(name = "f170")
     private float percent;
-    @JSONField(name = "f51")
-    private float limitUp;
-    @JSONField(name = "f52")
-    private float limitDown;
 }

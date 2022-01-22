@@ -18,11 +18,11 @@ public class DailyController {
     @Autowired
     private DailyDao dailyDao;
 
-    @RequestMapping(value = "/get/{code}/{date}")
-    public Daily getDailyById(@PathVariable("code") String code, @PathVariable("date") Date date)
+    @GetMapping(value="/get/{code}/{date}")
+    public Daily getDailyById(@PathVariable("code") String code, @PathVariable("date") String date)
     {
-        DailyId dailyId = new DailyId(code, date);
-        return dailyDao.getOne(dailyId);
+        DailyId dailyId = new DailyId(code, Date.valueOf(date));
+        return dailyDao.findById(dailyId).get();
     }
 
     @RequestMapping(value = "/saveAll")

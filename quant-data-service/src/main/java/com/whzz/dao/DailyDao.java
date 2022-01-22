@@ -13,6 +13,6 @@ import java.sql.Date;
 public interface DailyDao extends JpaRepository<Daily, DailyId>
 {
     @Modifying//增删改必须有这个注解
-    @Query(value = "update daily set limit_up =:limitUp, limit_down =:limitDown  where code = :code and date =:date", nativeQuery = true)
+    @Query(value = "UPDATE Daily SET limit_up =:limitUp, limit_down =:limitDown WHERE code = :code AND date =:date", nativeQuery = true)
     void updateDaiyLimits(float limitUp, float limitDown, String code, Date date);
 }
